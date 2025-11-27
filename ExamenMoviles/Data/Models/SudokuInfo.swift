@@ -8,9 +8,6 @@
 import Foundation
 
 struct Sudoku: Codable {
-    var rows: [Row]
-}
-
-struct Row: Codable {
-    var data: [Int?]
+    let puzzle: [[Int?]]
+    let solution: [[Int]]
 }
