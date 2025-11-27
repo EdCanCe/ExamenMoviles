@@ -15,12 +15,27 @@ struct SudokuView: View {
     @State var coordX: Int = 0
     @State var coordY: Int = 0
     @State var newValue: Int?
+    @State var hasVictory: Int = 0
         
     var body: some View {
         NavigationStack {
             
             Spacer()
             Spacer()
+            
+            if hasVictory == 1 {
+                Text("Felicidades, has ganado!")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.orange)
+                    .padding(24)
+            } else if hasVictory == 2 {
+                Text("Aún no está del todo correcto")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.red)
+                    .padding(24)
+            }
             
             if viewModel.isLoading {
                 Text("Obteniendo nuevo tablero...")
@@ -72,6 +87,25 @@ struct SudokuView: View {
                             }
                         }
                     }
+                    
+                    Spacer()
+                        .frame(height: 32)
+                    
+                    Button("Verificar resultados") {
+                        let currentState = viewModel.verifyWin()
+                        
+                        if currentState == true {
+                            hasVictory = 1
+                        } else {
+                            hasVictory = 2
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(10)
+                    .background(Color(UIColor.systemGray6))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .padding(.horizontal, 24)
                 }
                 .alert("Necesita escoger el valor.", isPresented: $hasPopup) {
                     Button("Entendido", role: .cancel) {
@@ -111,6 +145,7 @@ struct SudokuView: View {
                                 showInput = false
                                 viewModel.saveCell(x: coordX, y: coordY, value: newValue ?? 0)
                                 newValue = nil
+                                hasVictory = 0
                             }
                             .frame(maxWidth: .infinity)
                             .padding(10)

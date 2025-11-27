@@ -57,8 +57,8 @@ class SudokuViewModel: ObservableObject {
     func verifyWin() -> Bool {
         let fullSize = sudoku.puzzle.count
         
-        for i in 0..<sudoku.puzzle.count {
-            for j in 0..<sudoku.puzzle.count {
+        for i in 0..<fullSize {
+            for j in 0..<fullSize {
                 if sudoku.puzzle[i][j].value != nil {
                     continue
                 } else if sudoku.puzzle[i][j].input ?? -1 != sudoku.solution[i][j].value {
