@@ -8,12 +8,8 @@
 import Foundation
 
 protocol ProfileProtocol {
-    func getLastHouse() -> String?
-    func setLastHouse(house: String)
-    func getLastWizard() -> String?
-    func setLastWizard(wizard: String)
-    func getLastSpell() -> String?
-    func setLastSpell(spell: String)
+    func setLastGame(game: SudokuWithCoords)
+    func getLastGame() throws -> SudokuWithCoords
 }
 
 class ProfileRepository: ProfileProtocol {
@@ -24,27 +20,18 @@ class ProfileRepository: ProfileProtocol {
         self.service = service
     }
     
-    func getLastHouse() -> String? {
-        return service.getLastHouse()
+    func setLastGame(game: SudokuWithCoords) {
+        let data = try? JSONEncoder().encode(game)
+        
+        service.setLastGame(game: data ?? Data())
     }
     
-    func setLastHouse(house: String) {
-        service.setLastHouse(house: house)
-    }
-    
-    func getLastWizard() -> String? {
-        return service.getLastWizard()
-    }
-    
-    func setLastWizard(wizard: String) {
-        service.setLastWizard(wizard: wizard)
-    }
-    
-    func getLastSpell() -> String? {
-        return service.getLastSpell()
-    }
-    
-    func setLastSpell(spell: String) {
-        service.setLastSpell(spell: spell)
+    func getLastGame() throws -> SudokuWithCoords {
+        do {
+            return try service.getLastGame()
+        } catch {
+            print("the data had this \(error)")
+            throw error
+        }
     }
 }

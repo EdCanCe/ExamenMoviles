@@ -172,6 +172,9 @@ struct SudokuView: View {
             Spacer()
             Spacer()
         }
+        .onAppear() {
+            viewModel.getOfflineItems()
+        }
     }
 }
 

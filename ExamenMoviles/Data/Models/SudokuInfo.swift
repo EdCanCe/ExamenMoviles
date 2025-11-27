@@ -12,12 +12,12 @@ struct Sudoku: Codable {
     let solution: [[Int]]
 }
 
-struct SudokuWithCoords {
+struct SudokuWithCoords: Codable {
     var puzzle: [[Coord]]
     var solution: [[Coord]]
 }
 
-struct Coord: Hashable{
+struct Coord: Hashable, Codable{
     let value: Int?
     let x: Int
     let y: Int

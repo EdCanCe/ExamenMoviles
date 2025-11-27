@@ -10,28 +10,18 @@ import Foundation
 class ProfileService {
     static let shared = ProfileService()
     
-    func getLastHouse() -> String? {
-        return UserDefaults.standard.string(forKey: "lastHouse")
-    }
-
-    func setLastHouse(house: String) {
-        UserDefaults.standard.set(house, forKey: "lastHouse")
+    func setLastGame(game: Data) {
+        UserDefaults.standard.set(game, forKey: "lastGame")
     }
     
-    func getLastWizard() -> String? {
-        return UserDefaults.standard.string(forKey: "lastWizard")
-    }
-
-    func setLastWizard(wizard: String) {
-        UserDefaults.standard.set(wizard, forKey: "lastWizard")
-    }
-    
-    func getLastSpell() -> String? {
-        return UserDefaults.standard.string(forKey: "lastSpell")
-    }
-
-    func setLastSpell(spell: String) {
-        UserDefaults.standard.set(spell, forKey: "lastSpell")
+    func getLastGame() throws -> SudokuWithCoords {
+        let data = UserDefaults.standard.data(forKey: "lastGame") ?? Data()
+        do {
+            let game = try JSONDecoder().decode(SudokuWithCoords.self, from: data)
+            return game
+        } catch {
+            throw error
+        }
     }
 
 }

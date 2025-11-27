@@ -15,14 +15,27 @@ class SudokuViewModel: ObservableObject {
     @Published var squareSize: CGFloat = 0
     
     var getNewSudokuRequirement: GetNewSudokuRequirementProtocol
+    var profileRequirement: ProfileRequirementProtocol
     
-    init(getNewSudokuRequirement: GetNewSudokuRequirementProtocol = GetNewSudokuRequirement.shared) {
+    init(getNewSudokuRequirement: GetNewSudokuRequirementProtocol = GetNewSudokuRequirement.shared, profileRequirement: ProfileRequirementProtocol = ProfileRequirement.shared) {
         self.getNewSudokuRequirement = getNewSudokuRequirement
+        self.profileRequirement = profileRequirement
+    }
+    
+    func getOfflineItems() {
+        do {
+            let baseSudoku = try profileRequirement.getLastGame()
+            sudoku = baseSudoku
+            squareSize = baseSudoku.puzzle.count == 4 ? 56 : 32
+        } catch {
+            print("Failed to get last game:", error)
+        }
     }
     
     func getItems(size: Size, difficulty: Difficulty) async {
         isLoading = true
         do {
+            
             let baseSudoku: Sudoku = try await getNewSudokuRequirement.getNewSudoku(size: size, difficulty: difficulty)
             sudoku = SudokuWithCoords(puzzle: [], solution: [])
             
@@ -48,10 +61,12 @@ class SudokuViewModel: ObservableObject {
             hasError = true
             isLoading = false
         }
+        profileRequirement.setLastGame(game: sudoku)
     }
     
     func saveCell(x: Int, y: Int, value: Int) {
         sudoku.puzzle[x][y].input = value
+        profileRequirement.setLastGame(game: sudoku)
     }
     
     func verifyWin() -> Bool {
