@@ -22,4 +22,5 @@ struct Coord: Hashable{
     let x: Int
     let y: Int
     let isClear: Bool
+    var input: Int?
 }

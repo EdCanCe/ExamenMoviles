@@ -9,6 +9,12 @@ import SwiftUI
 
 struct SudokuView: View {
     @StateObject var viewModel = SudokuViewModel()
+    
+    @State var showInput: Bool = false
+    @State var hasPopup: Bool = false
+    @State var coordX: Int = 0
+    @State var coordY: Int = 0
+    @State var newValue: Int?
         
     var body: some View {
         NavigationStack {
@@ -38,17 +44,83 @@ struct SudokuView: View {
                                         .background(element.isClear ? .clear : Color.gray.opacity(0.2))
                                         .clipShape(RoundedRectangle(cornerRadius: 8))
                                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(.gray, lineWidth: 1))
-                                } else {
-                                    Text("AA")
-                                        //.keyboardType(type.keyboardType)
+                                } else if let val = element.input {
+                                    Text("\(val)")
                                         .frame(width: viewModel.squareSize, height: viewModel.squareSize)
+                                        .foregroundStyle(.gray)
                                         .background(element.isClear ? .clear : Color.gray.opacity(0.2))
                                         .clipShape(RoundedRectangle(cornerRadius: 8))
                                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(.gray, lineWidth: 1))
+                                        .onTapGesture {
+                                            coordX = element.x
+                                            coordY = element.y
+                                            showInput = true
+                                        }
+                                } else {
+                                    Text("")
+                                        .frame(width: viewModel.squareSize, height: viewModel.squareSize)
+                                        .foregroundStyle(.gray)
+                                        .background(element.isClear ? .clear : Color.gray.opacity(0.2))
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(.gray, lineWidth: 1))
+                                        .onTapGesture {
+                                            coordX = element.x
+                                            coordY = element.y
+                                            showInput = true
+                                        }
                                 }
                             }
                         }
                     }
+                }
+                .alert("Necesita escoger el valor.", isPresented: $hasPopup) {
+                    Button("Entendido", role: .cancel) {
+                        hasPopup = false
+                    }
+                }
+                .sheet(isPresented: $showInput) {
+                    VStack {
+                        HStack {
+                            Text("Valor:")
+                            
+                            Spacer()
+                            
+                            Picker("Escoja el valor", selection: $newValue) {
+                                ForEach(1...viewModel.sudoku.puzzle.count, id: \.self) { i in
+                                    Text(String(i)).tag(i)
+                                }
+                            }
+                        }
+                        
+                        HStack(spacing: 8) {
+                            Button("Cancelar") {
+                                showInput = false
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(10)
+                            .background(.red.opacity(0.4))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            
+                            Button("Guardar") {
+                                if newValue == nil {
+                                    hasPopup = true
+                                    return
+                                }
+                                
+                                showInput = false
+                                viewModel.saveCell(x: coordX, y: coordY, value: newValue ?? 0)
+                                newValue = nil
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(10)
+                            .background(Color(UIColor.systemGray6))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        
+                    }
+                    .padding(.horizontal, 24)
                 }
             }
             

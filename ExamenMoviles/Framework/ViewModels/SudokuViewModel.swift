@@ -49,4 +49,24 @@ class SudokuViewModel: ObservableObject {
             isLoading = false
         }
     }
+    
+    func saveCell(x: Int, y: Int, value: Int) {
+        sudoku.puzzle[x][y].input = value
+    }
+    
+    func verifyWin() -> Bool {
+        let fullSize = sudoku.puzzle.count
+        
+        for i in 0..<sudoku.puzzle.count {
+            for j in 0..<sudoku.puzzle.count {
+                if sudoku.puzzle[i][j].value != nil {
+                    continue
+                } else if sudoku.puzzle[i][j].input ?? -1 != sudoku.solution[i][j].value {
+                    return false
+                }
+            }
+        }
+        
+        return true
+    }
 }
