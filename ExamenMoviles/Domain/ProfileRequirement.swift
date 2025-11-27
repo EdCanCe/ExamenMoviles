@@ -6,12 +6,8 @@
 //
 
 protocol ProfileRequirementProtocol {
-    func getLastHouse() -> String?
-    func setLastHouse(house: String)
-    func getLastWizard() -> String?
-    func setLastWizard(wizard: String)
-    func getLastSpell() -> String?
-    func setLastSpell(spell: String)
+    func setLastGame(game: SudokuWithCoords)
+    func getLastGame() throws -> SudokuWithCoords
 }
 
 class ProfileRequirement: ProfileRequirementProtocol {
@@ -22,27 +18,16 @@ class ProfileRequirement: ProfileRequirementProtocol {
         self.dataRepository = dataRepository
     }
     
-    func getLastHouse() -> String? {
-        return dataRepository.getLastHouse()
+    func setLastGame(game: SudokuWithCoords) {
+        dataRepository.setLastGame(game: game)
     }
     
-    func setLastHouse(house: String) {
-        dataRepository.setLastHouse(house: house)
-    }
-    
-    func getLastWizard() -> String? {
-        return dataRepository.getLastWizard()
-    }
-    
-    func setLastWizard(wizard: String) {
-        dataRepository.setLastWizard(wizard: wizard)
-    }
-    
-    func getLastSpell() -> String? {
-        return dataRepository.getLastSpell()
-    }
-    
-    func setLastSpell(spell: String) {
-        dataRepository.setLastSpell(spell: spell)
+    func getLastGame() throws -> SudokuWithCoords {
+        do {
+            return try dataRepository.getLastGame()
+        } catch {
+            print("the data had this \(error)")
+            throw error
+        }
     }
 }
